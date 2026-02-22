@@ -11,6 +11,8 @@ function cleanText(str: string) {
 
 // Free models in priority order — if one is rate-limited, falls to next
 const MODELS = [
+  "google/gemini-2.0-flash-exp:free",
+  "deepseek/deepseek-r1-zero:free",
   "google/gemma-3-12b-it:free",
   "meta-llama/llama-3.2-3b-instruct:free",
   "microsoft/phi-4-reasoning-plus:free",
@@ -87,6 +89,8 @@ Rules:
         if (!response.ok || data.error) {
           lastError = data.error?.message || `HTTP ${response.status}`;
           console.warn(`Model ${model} failed:`, lastError);
+          // Wait 1 second before trying next model
+          await new Promise(res => setTimeout(res, 1000));
           continue;
         }
 
@@ -100,6 +104,8 @@ Rules:
       } catch (modelErr) {
         lastError = String(modelErr);
         console.warn(`Model ${model} threw:`, modelErr);
+        // Wait 1 second before trying next model
+        await new Promise(res => setTimeout(res, 1000));
         continue;
       }
     }
